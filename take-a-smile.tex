@@ -1,0 +1,79 @@
+% vim:set et:
+\documentclass[a4paper,12pt,landscape]{article}
+
+\usepackage{xltxtra}
+\usepackage{geometry}
+\usepackage{relsize}
+\def\RSlargest{999pt}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.pathmorphing}
+\usetikzlibrary{positioning}
+
+\pagestyle{empty}
+\def\npages{10}
+
+\input emoticons
+
+\def\maxemo{15}
+\def\emonumbered#1{
+    \ifcase#1
+        \emobasic\or
+        \emosad\or
+        \emoneutral\or
+        \emosmallsmile\or
+        \emobigsmile\or
+        \emoconfused\or
+        \emosexy\or
+        \emolookup\or
+        \emolookdown\or
+        \emoangry\or
+        \emolookleft\or
+        \emolookright\or
+        \emoblush\or
+        \emomartian\or
+        \emodevilish\or
+        \emoalmostcrying
+    \fi
+}
+
+\tikzset{wiggle/.style={decorate, decoration={random steps, amplitude=1pt}}}
+
+\begin{document}
+\foreach \page in {1, ..., \npages}{
+
+\mbox{}
+\begin{tikzpicture}[remember picture, overlay]
+    \def\bottomheight{6cm}
+    \def\nsmiles{6}
+
+    \node [yshift=0.5 * \bottomheight] at (current page.center)
+    {
+        \relscale{6}
+        \fontspec{Purisa}
+        \bfseries
+        Take a smile!
+    };
+
+    \begin{scope}[ultra thick, loosely dashed]
+        \draw[wiggle]
+            ($ (current page.south west) + (0, \bottomheight) $)
+            -- ($ (current page.south east) + (0, \bottomheight) $);
+
+        \foreach \n [evaluate=\n] in {1,...,{\numexpr\nsmiles-1}}
+            \draw[wiggle] ($ (current page.south west)!{\n/\nsmiles}!(current page.south east) $)
+                     -- ++(0, \bottomheight);
+    \end{scope}
+
+    \foreach \n [evaluate=\n] in {1,...,\nsmiles} {
+        \node at ($ (current page.south west)!{(\n-0.5)/\nsmiles}!(current page.south east) + (0, 0.5*\bottomheight) $)
+            {\tikz[transform canvas={scale=4.5}]{
+                \pgfmathrandominteger{\num}{0}{\maxemo}
+                \emonumbered{\num}
+            }};
+    }
+\end{tikzpicture}
+\clearpage
+
+}
+\end{document}
